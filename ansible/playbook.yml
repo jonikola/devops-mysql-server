@@ -1,0 +1,44 @@
+- hosts: mysql
+  become: true
+  vars_files:
+    - vars.yml
+  tasks:
+    - name: Update packages
+      apt:
+        update_cache: yes
+
+    - name: Install MySQL server
+      apt:
+        name: mysql-server
+        state: present
+
+    - name: Make sure MySQL is running
+      service:
+        name: mysql
+        state: started
+        enabled: yes
+
+    - name: Set MySQL root password
+      mysql_user:
+        login_user: root
+        login_password: ""
+        user: root
+        password: "{{ root_password }}"
+        host_all: true
+      ignore_errors: true
+
+    - name: Create MySQL db
+      mysql_db:
+        name: "{{ db_name }}"
+        state: present
+        login_user: root
+        login_password: "{{ root_password }}"
+
+    - name: Create MySQL user
+      mysql_user:
+        name: "{{ db_user }}"
+        password: "{{ db_password }}"
+        priv: "{{ db_name }}.*:ALL"
+        state: present
+        login_user: root
+        login_password: "{{ root_password }}"

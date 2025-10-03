@@ -1,0 +1,4 @@
+db_name: test_db
+db_user: test_user
+db_password: TestPass123
+root_password: RootPass123
